@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>RentFly | Gestión Aeronáutica</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- BARRA DE NAVEGACIÓN -->
+  <header class="topbar">
+
+    <div class="brand">
+      <div class="brand-icon">✈</div>
+      <div>
+        <h1>RentFly</h1>
+        <span>ESCUELA SIDDFLY</span>
+      </div>
+    </div>
+
+    <nav class="navigation">
+      <a href="#inicio" class="active">Inicio</a>
+      <a href="#flota">Nuestra flota</a>
+      <a href="#reservar">Reservaciones</a>
+      <a href="#bitacoras">Bitácoras</a>
+    </nav>
+
+    <div style="display: flex; align-items: center; gap: 0.6rem;">
+      <span id="sesion-info" class="badge" style="display: none;"></span>
+      <button id="btn-logout" type="button" class="btn-secondary" style="display: none;">
+        Cerrar sesión
+      </button>
+      <span id="api-status" class="badge">
+        Verificando API...
+      </span>
+    </div>
+
+  </header>
+
+
+  <main>
+
+    <!-- BANNER PRINCIPAL -->
+    <section id="inicio" class="hero-banner">
+
+      <div class="hero-content">
+
+        <span class="hero-tag">
+          ESCUELA DE AVIACIÓN · RENTFLY
+        </span>
+
+        <h2>
+          Tu próximo vuelo<br>
+          comienza aquí.
+        </h2>
+
+        <p>
+          Administra aeronaves, programa vuelos y gestiona
+          tus reservaciones desde una sola plataforma.
+        </p>
+
+        <a href="#reservar" class="hero-button">
+          Reservar una aeronave <span>→</span>
+        </a>
+
+      </div>
+
+      <div class="hero-footer">
+        <span>PRECISIÓN · SEGURIDAD · EXCELENCIA</span>
+        <span>PLATAFORMA DE GESTIÓN AERONÁUTICA</span>
+      </div>
+
+    </section>
+
+
+    <div class="container">
+
+      <!-- CONTROL DE ACCESO / LOGIN RLS -->
+      <section id="login-section" class="card">
+
+        <div class="section-header">
+
+          <div>
+            <span class="section-eyebrow">CONTROL DE ACCESO · RLS</span>
+            <h2>Iniciar sesión</h2>
+            <p>Ingresa tus credenciales para acceder según tu rol operativo.</p>
+          </div>
+
+          <div class="form-icon">✈</div>
+
+        </div>
+
+        <form id="login-form" class="form-grid">
+
+          <label>
+            <span>Correo electrónico</span>
+            <input
+              type="email"
+              id="login_correo"
+              required
+              placeholder="admin@rentfly.com"
+            >
+          </label>
+
+          <label>
+            <span>Contraseña</span>
+            <input
+              type="password"
+              id="login_password"
+              required
+              placeholder="••••••••"
+            >
+          </label>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">
+              Entrar al sistema
+            </button>
+          </div>
+
+        </form>
+
+        <p id="login-feedback" class="feedback"></p>
+
+      </section>
+
+
+      <!-- CONTENIDO PROTEGIDO POR SESIÓN -->
+      <div id="app-content" style="display: none;">
+
+        <!-- BIENVENIDA -->
+        <section class="welcome-section">
+
+          <div>
+            <span class="section-eyebrow">CENTRO DE OPERACIONES</span>
+            <h2>Panel de administración</h2>
+            <p>Gestiona las operaciones y actividades de vuelo de la escuela.</p>
+          </div>
+
+          <div class="welcome-icon">✈</div>
+
+        </section>
+
+
+        <!-- FLOTA DISPONIBLE -->
+        <section id="flota" class="card">
+
+          <div class="section-header">
+
+            <div>
+              <span class="section-eyebrow">AERONAVES</span>
+              <h2>Flota disponible</h2>
+              <p>Consulta las aeronaves registradas y su disponibilidad.</p>
+            </div>
+
+            <span class="section-counter">01 / FLOTA</span>
+
+          </div>
+
+          <div id="aeronaves-list" class="grid"></div>
+
+        </section>
+
+
+        <!-- NUEVA RESERVACIÓN -->
+        <section id="reservar" class="card">
+
+          <div class="section-header">
+
+            <div>
+              <span class="section-eyebrow">PROGRAMACIÓN DE VUELOS</span>
+              <h2>Nueva reservación</h2>
+              <p>Completa los datos para programar una nueva operación aérea.</p>
+            </div>
+
+            <div class="form-icon">✈</div>
+
+          </div>
+
+          <form id="reserva-form" class="form-grid">
+
+            <label>
+              <span>Alumno / Piloto</span>
+              <select id="usuario_id" required></select>
+            </label>
+
+            <label>
+              <span>Aeronave</span>
+              <select id="aeronave_id" required></select>
+            </label>
+
+            <label>
+              <span>Fecha y hora de salida</span>
+              <input type="datetime-local" id="fecha_inicio" required>
+            </label>
+
+            <label>
+              <span>Fecha y hora de llegada</span>
+              <input type="datetime-local" id="fecha_fin" required>
+            </label>
+
+            <label>
+              <span>Modalidad de vuelo</span>
+              <select id="tipo_vuelo" required>
+                <option value="solo">Vuelo solo</option>
+                <option value="dual">Vuelo dual (instructor)</option>
+                <option value="simulador">Simulador</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Horas estimadas de vuelo</span>
+              <input
+                type="number"
+                step="0.5"
+                min="0.5"
+                value="1.5"
+                id="horas_estimadas"
+                required
+              >
+            </label>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">
+                <span>+</span> Crear reservación
+              </button>
+            </div>
+
+          </form>
+
+          <p id="form-feedback" class="feedback"></p>
+
+        </section>
+
+
+        <!-- MODIFICAR RESERVACIÓN -->
+        <section id="editar-section" class="card" style="display: none;">
+
+          <div class="section-header">
+
+            <div>
+              <span class="section-eyebrow">GESTIÓN DE OPERACIONES</span>
+              <h2>Modificar reservación</h2>
+              <p>Actualiza la información de la reservación seleccionada.</p>
+            </div>
+
+          </div>
+
+          <form id="editar-reserva-form" class="form-grid">
+
+            <input type="hidden" id="edit_reserva_id">
+
+            <label>
+              <span>Alumno / Piloto</span>
+              <select id="edit_usuario_id" required></select>
+            </label>
+
+            <label>
+              <span>Aeronave</span>
+              <select id="edit_aeronave_id" required></select>
+            </label>
+
+            <label>
+              <span>Fecha y hora de salida</span>
+              <input type="datetime-local" id="edit_fecha_inicio" required>
+            </label>
+
+            <label>
+              <span>Fecha y hora de llegada</span>
+              <input type="datetime-local" id="edit_fecha_fin" required>
+            </label>
+
+            <label>
+              <span>Modalidad de vuelo</span>
+              <select id="edit_tipo_vuelo" required>
+                <option value="solo">Vuelo solo</option>
+                <option value="dual">Vuelo dual (instructor)</option>
+                <option value="simulador">Simulador</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Horas estimadas</span>
+              <input
+                type="number"
+                step="0.5"
+                min="0.5"
+                id="edit_horas_estimadas"
+                required
+              >
+            </label>
+
+            <label>
+              <span>Estado de la reservación</span>
+              <select id="edit_estatus" required>
+                <option value="confirmada">Confirmada</option>
+                <option value="completada">Completada</option>
+                <option value="cancelada">Cancelada</option>
+              </select>
+            </label>
+
+            <div class="form-actions">
+
+              <button
+                type="button"
+                id="btn-cancelar-edicion"
+                class="btn-secondary"
+              >
+                Cancelar
+              </button>
+
+              <button type="submit" class="btn-primary">
+                Guardar cambios
+              </button>
+
+            </div>
+
+          </form>
+
+          <p id="edit-feedback" class="feedback"></p>
+
+        </section>
+
+
+        <!-- RESERVACIONES Y BITÁCORAS -->
+        <section id="bitacoras" class="card">
+
+          <div class="section-header">
+
+            <div>
+              <span class="section-eyebrow">CONTROL OPERACIONAL</span>
+              <h2>Reservaciones y bitácoras</h2>
+              <p>Seguimiento de vuelos y registros sincronizados.</p>
+            </div>
+
+            <button
+              id="btn-refresh"
+              type="button"
+              class="btn-secondary"
+            >
+              ↻ Actualizar
+            </button>
+
+          </div>
+
+          <div id="reservas-list" class="stack"></div>
+
+        </section>
+
+
+        <!-- NOTIFICACIONES -->
+        <section class="card">
+
+          <div class="section-header">
+
+            <div>
+              <span class="section-eyebrow">CENTRO DE NOTIFICACIONES</span>
+              <h2>Alertas del sistema</h2>
+              <p>Notificaciones y actualizaciones de las operaciones aéreas.</p>
+            </div>
+
+            <div class="notification-icon">♧</div>
+
+          </div>
+
+          <ul id="notificaciones-list" class="alerts"></ul>
+
+        </section>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <!-- PIE DE PÁGINA -->
+  <footer class="footer">
+
+    <div class="footer-brand">
+      <span>✈ RENTFLY</span>
+      <p>Gestión inteligente de operaciones aeronáuticas.</p>
+    </div>
+
+    <div class="footer-info">
+      <span>PLATAFORMA DE AVIACIÓN</span>
+      <span>© 2026 RENTFLY · TODOS LOS DERECHOS RESERVADOS</span>
+    </div>
+
+  </footer>
+
+
+  <script type="module" src="app.js"></script>
+
+</body>
+</html>

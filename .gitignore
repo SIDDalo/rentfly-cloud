@@ -1,4 +1,5 @@
-node_modules/
+﻿node_modules/
 .env
-serviceAccountKey.json
-.DS_Store
+*.json
+!package.json
+!package-lock.json
