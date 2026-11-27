@@ -1,6 +1,6 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = "https://rentfly-api.onrender.com/api";
 
 const apiStatusEl = document.getElementById("api-status");
 const sesionInfoEl = document.getElementById("sesion-info");
